@@ -1,4 +1,3 @@
 #!/bin/bash
-git config --global push.default matching
-git remote add deploy ssh://git@$IP:$PORT$DEPLOY_DIR
-git push deploy master
+set -e
+ssh pepo4343@203.146.251.194 -v exit
