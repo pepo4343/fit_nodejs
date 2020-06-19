@@ -1,7 +1,5 @@
 language: ruby
-sudo: required
-services:
-  - docker
+sudo: false
 
 addons:
   ssh_known_hosts: 203.146.251.194
