@@ -1,5 +1,6 @@
-language: php
-sudo: false
+sudo: required
+services:
+  - docker
 
 addons:
   ssh_known_hosts: 203.146.251.194
