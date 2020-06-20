@@ -3,6 +3,7 @@ services:
     nodejs:
         depends_on:
             - mongo
+        container_name: fit_node
         build: .
         networks: 
             - front
@@ -10,6 +11,7 @@ services:
 
     mongo:
         image: mongo:latest
+        container_name: fit_mongo
         volumes:
             - mongodb_data_container:/data/db
         networks: 
