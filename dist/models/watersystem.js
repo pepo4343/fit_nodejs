@@ -4,9 +4,9 @@ exports.WaterSystem = void 0;
 const db_1 = require("../utils/db");
 const mongodb_1 = require("mongodb");
 const defaultSchedule = {
-    startTimeMorning: "8,0",
+    startTimeMorning: "8.0",
     timePerStationMorning: 15,
-    startTimeEvening: "16,0",
+    startTimeEvening: "16.0",
     timePerStationEvening: 15
 };
 const collection = 'watersystem';

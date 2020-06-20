@@ -10,9 +10,9 @@ interface SaveObject  {
 }
 
 const defaultSchedule ={
-    startTimeMorning:"8,0",
+    startTimeMorning:"8.0",
     timePerStationMorning:15,
-    startTimeEvening:"16,0",
+    startTimeEvening:"16.0",
     timePerStationEvening:15
 }
 
