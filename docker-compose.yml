@@ -4,9 +4,6 @@ services:
         build: .
         ports:
             - 3000:3000
-        volumes:
-            - /app/node_modules
-            - .:/app
         networks: 
             - front
             - db
