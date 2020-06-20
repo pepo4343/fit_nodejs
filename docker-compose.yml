@@ -1,11 +1,29 @@
 version: '3'
 services:
     nodejs:
-        build:
-            context: .
-            dockerfile: Dockerfile.dev
+        build: .
         ports:
             - 3000:3000
         volumes:
             - /app/node_modules
             - .:/app
+        networks: 
+            - front
+            - db
+
+    mongo:
+        image: mongo:latest
+        volumes:
+            - mongodb_data_container:/data/db
+        networks: 
+            - db
+    
+volumes:
+    mongodb_data_container:
+
+
+networks:
+    front:
+        external:
+            name: nginx
+    db:
