@@ -9,26 +9,17 @@ export  const listSchedule:RequestHandler = async (req,res,next)=>{
     res.status(201).json(result)
 }
 
-export  const listScheduleCSV:RequestHandler = async (req,res,next)=>{
+export  const listScheduleMin:RequestHandler = async (req,res,next)=>{
 
     const result = await WaterSystem.get();
-    console.log( );
-    const  csvResults= Object.values(result)
-    csvResults.shift();
-
-    const startTimeMorning:number[] = (csvResults[0] as string).split('.').map((v,i)=>{
-        return parseInt(v)*(i==0?3600:60)
-    })
     
-
-    const startTimeEvening:number[] = (csvResults[2] as string).split('.').map((v,i)=>{
-        return parseInt(v)*(i==0?3600:60)
-    })
-
-    csvResults[0] = startTimeMorning.reduce((a, b) => a + b, 0)
-    csvResults[2] = startTimeEvening.reduce((a, b) => a + b, 0)
-
-    res.status(201).send(csvResults.join(','))
+    delete result._id
+    for(let item of result.stations){
+        delete item.station_id;
+        delete item.station_name;
+    }
+    res.status(201).json(result)
+    
 }
 
 export const setSchedule:RequestHandler = async (req,res,next)=>{
@@ -36,5 +27,11 @@ export const setSchedule:RequestHandler = async (req,res,next)=>{
     
     await  WaterSystem.save(req.body);
 
+    res.status(200).json({message:'Update Successful'})
+}
+export const addSchedule:RequestHandler = async (req,res,next)=>{
+    console.log(req.body);
+    
+    await  WaterSystem.addSchedule(req.body.station_id,req.body.schedule)
     res.status(200).json({message:'Update Successful'})
 }
