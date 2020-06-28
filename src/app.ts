@@ -6,7 +6,12 @@ import bodyParser from 'body-parser';
 
 import { mongoConnect } from './utils/db'
 
+import { mqttInit, getMqttClient } from './utils/mqtt'
+
+import {mqttWaterSystem} from './controllers/watersystem'
+
 const app = express();
+
 
 app.use((req, res, next) => {
     res.setHeader("Access-Control-Allow-Origin", "*");
@@ -36,5 +41,14 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 mongoConnect(() => {
     app.listen(3000, () => {
         console.log("running on port 300");
+        mqttInit();
+        const client = getMqttClient();
+        client.on('connect', () => {
+            mqttWaterSystem();
+        })
+
     });
 })
+
+
+
