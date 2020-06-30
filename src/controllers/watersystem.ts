@@ -35,7 +35,7 @@ export const setSchedule:RequestHandler = async (req,res,next)=>{
 
     res.status(200).json({message:'Update Successful'})
 }
-export const addSchedule:RequestHandler = async (req,res,next)=>{
+export const saveSchedule:RequestHandler = async (req,res,next)=>{
     console.log(req.body);
     i++
     

@@ -93,14 +93,13 @@ export class WaterSystem {
         return
 
     }
-    static addSchedule = async (station_id:string,schedule:number[])=>{
+    static addSchedule = async (station_id:string,schedule:number[][])=>{
         const db_collection = getDb().collection(collection);
         const id = new ObjectId(station_id)
         const findScheduleResults = await db_collection.findOne({});
         const currentScheduleIndex = findScheduleResults.stations.findIndex((e:{station_id:ObjectId})=>e.station_id.toString()==station_id);
        
-        findScheduleResults.stations[currentScheduleIndex].schedule.push(schedule)
-        findScheduleResults.stations[currentScheduleIndex].schedule.sort((a:number[],b:number[])=>a[0]-b[0]);
+        findScheduleResults.stations[currentScheduleIndex].schedule = schedule;
         await db_collection.updateOne({_id: findScheduleResults._id}, {
             $set: findScheduleResults
         })

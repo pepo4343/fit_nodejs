@@ -1,6 +1,6 @@
 import {Router} from 'express'
 
-import {listSchedule ,setSchedule ,addSchedule,listScheduleMin} from '../controllers/watersystem'
+import {listSchedule ,setSchedule ,saveSchedule,listScheduleMin} from '../controllers/watersystem'
 const router = Router();
 
 router.get("/schedule/list",listSchedule)
@@ -8,6 +8,6 @@ router.get("/schedule/list/min",listScheduleMin)
 
 router.post("/schedule/set",setSchedule)
 
-router.post("/schedule/add",addSchedule)
+router.post("/schedule/save",saveSchedule)
 
 export default router;
