@@ -8,7 +8,10 @@ import { mongoConnect } from './utils/db'
 
 import { mqttInit, getMqttClient } from './utils/mqtt'
 
-import {mqttWaterSystem} from './controllers/watersystem'
+import { mqttWaterSystem } from './controllers/watersystem'
+import { WaterSystem } from './models/watersystem';
+
+import Config from './config'
 
 const app = express();
 
@@ -43,8 +46,19 @@ mongoConnect(() => {
         console.log("running on port 300");
         mqttInit();
         const client = getMqttClient();
-        client.on('connect', () => {
-            mqttWaterSystem();
+        client.on('connect', async () => {
+            const result = await WaterSystem.findAll();
+            for (let i of result) {
+                for(let station in i.stations){
+                    
+                    
+                    client.publish(Config.mqtt.defaultUri + Config.mqtt.watersystem.schedule + i.alias+`/${station}`, i.stations[station].schedule.join(","), { retain: true })
+                }
+                client.publish(Config.mqtt.defaultUri + Config.mqtt.watersystem.workingtime + i.alias, i.workingTime.join(","), { retain: true })
+             
+
+            }
+
         })
 
     });

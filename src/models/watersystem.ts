@@ -16,6 +16,7 @@ interface StationConfig {
 
 
 interface SaveObject {
+    alias?:string,
     workingTime?: number[],
     stations: StationConfig[]
 }
@@ -74,11 +75,13 @@ export class WaterSystem {
     ) {
 
     }
-    static save = async (saveObject: SaveObject) => {
+    static save = async (saveObject: SaveObject,alias:string) => {
         let _id: string;
         const db_collection = getDb().collection(collection);
-        const findScheduleResults = await db_collection.findOne({});
+        const findScheduleResults = await db_collection.findOne({alias:alias});
         if (!findScheduleResults) {
+            const schedule = {...defaultSchedule}
+            schedule.alias = alias;     
             const insertResults = await db_collection.insertOne(defaultSchedule)//insert default value
             _id = insertResults.insertedId
         }
@@ -93,10 +96,10 @@ export class WaterSystem {
         return
 
     }
-    static addSchedule = async (station_id:string,schedule:number[][])=>{
+    static addSchedule = async (station_id:string,schedule:number[][],alias:string)=>{
         const db_collection = getDb().collection(collection);
         const id = new ObjectId(station_id)
-        const findScheduleResults = await db_collection.findOne({});
+        const findScheduleResults = await db_collection.findOne({alias:alias});
         const currentScheduleIndex = findScheduleResults.stations.findIndex((e:{station_id:ObjectId})=>e.station_id.toString()==station_id);
        
         findScheduleResults.stations[currentScheduleIndex].schedule = schedule;
@@ -109,18 +112,28 @@ export class WaterSystem {
         
     }
 
-    static get = async () => {
+    static get = async ( alias:string) => {
         let _id: string;
         const db_collection = getDb().collection(collection);
-        const findScheduleResults = await db_collection.findOne({});
+        const findScheduleResults = await db_collection.findOne({alias:alias});
         if (!findScheduleResults) {
-            const insertResults = await db_collection.insertOne(defaultSchedule)//insert default value
+            const schedule = {...defaultSchedule}
+            schedule.alias = alias;      
+            const insertResults = await db_collection.insertOne(schedule)//insert default value
             const findResults = await db_collection.findOne({ _id: insertResults.insertedId });
             return findResults;
         }
         else {
             return findScheduleResults
         }
+    }
+
+    static findAll = async ()=>{
+        const db_collection = getDb().collection(collection);
+        const findScheduleResults = await db_collection.find().toArray();
+      
+        return findScheduleResults;
+        
     }
 
 

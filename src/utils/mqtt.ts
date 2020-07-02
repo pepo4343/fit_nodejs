@@ -5,7 +5,7 @@ import config from '../config'
 
 let _client:MqttClient|undefined;
 export const mqttInit = () => {
-    _client = mqtt.connect(`mqtt://${config.mqtt.ip}`, { clientId: "fit_node_js_1", })
+    _client = mqtt.connect(`mqtt://${config.mqtt.ip}`, { clientId: "fit_node_js_2", })
 }
 
 export const getMqttClient = ()=>{

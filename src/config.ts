@@ -5,6 +5,10 @@ export default {
     },
     mqtt:{
         ip:"203.146.251.194",
-        defaultUri:"fit/"
+        defaultUri:"fit/",
+        watersystem:{
+            workingtime:"watersystem/workingtime/",
+            schedule:"watersystem/schedule/"
+        }
     }
 }
