@@ -10,11 +10,11 @@ export const addDevice: RequestHandler = async (req, res, next) => {
             alias,
             name,
             description,
-            mode,
+            model,
             mcu,
             localIP,
         } = req.body
-        const device = new Device(alias, name, description, mode, mcu, localIP)
+        const device = new Device(alias, name, description, model, mcu, localIP)
 
         await device.save();
 
