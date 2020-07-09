@@ -1,13 +1,18 @@
 import {Router} from 'express'
 
-import {listSchedule ,setSchedule, listAllSchedule,saveSchedule,listScheduleMin} from '../controllers/watersystem'
+import {getWaterSystem ,addWaterSystem,updateSchedule,deleteWaterSystem} from '../controllers/watersystem'
 const router = Router();
-router.get("/schedule/list",listAllSchedule)
-router.get("/schedule/list/:alias",listSchedule)
-router.get("/schedule/list/min/:alias",listScheduleMin)
 
-router.post("/schedule/set/:alias",setSchedule)
 
-router.post("/schedule/save/:alias",saveSchedule)
+
+router.post("/add",addWaterSystem)
+router.get("/get",getWaterSystem)
+router.get("/get/:alias",getWaterSystem)
+router.post("/delete",deleteWaterSystem)
+
+
+router.post("/schedule/update",updateSchedule)
+
+
 
 export default router;

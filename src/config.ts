@@ -7,8 +7,9 @@ export default {
         ip:"203.146.251.194",
         defaultUri:"fit/",
         watersystem:{
-            workingtime:"watersystem/workingtime/",
-            schedule:"watersystem/schedule/"
+            workingtimeTopic:"watersystem/workingtime",
+            scheduleTopic:"watersystem/schedule",
+            statusTopic:"watersystem/status",
         }
     }
 }

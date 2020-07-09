@@ -1,24 +1,17 @@
 import { getDb } from '../utils/db'
 import { ObjectId } from 'mongodb';
 
-interface Schedule {
-    start: number,
-    end: number
-}
-
-
-interface StationConfig {
+interface Station {
     station_id: ObjectId,
     station_name: string
     schedule: number[][]
 
 }
 
-
 interface SaveObject {
-    alias?:string,
+    alias?: string,
     workingTime?: number[],
-    stations: StationConfig[]
+    stations: Station[]
 }
 
 const defaultSchedule: SaveObject = {
@@ -67,73 +60,86 @@ const collection = 'watersystem';
 export class WaterSystem {
 
     constructor(
-        public startTimeMorning: string,
-        public timePerStationMorning: number,
-        public startTimeEvening: string,
-        public timePerStationEvening: number,
-
+        public device_id: string,
+        public workingTime: number[][],
+        public stations: Station[]
     ) {
 
     }
-    static save = async (saveObject: SaveObject,alias:string) => {
-        let _id: string;
-        const db_collection = getDb().collection(collection);
-        const findScheduleResults = await db_collection.findOne({alias:alias});
-        if (!findScheduleResults) {
-            const schedule = {...defaultSchedule}
-            schedule.alias = alias;     
-            const insertResults = await db_collection.insertOne(defaultSchedule)//insert default value
-            _id = insertResults.insertedId
-        }
-        else {
-            console.log(findScheduleResults);
-            _id = findScheduleResults._id
+    save = async () => {
+        const db = getDb().collection(collection);
+        const findAlias = await db.findOne({ device_id: new ObjectId(this.device_id) })
+        if (findAlias) {
+            throw Error("duplicate device")
         }
 
-        const updateScheduleResults = await db_collection.updateOne({ _id: new ObjectId(_id) }, {
-            $set: saveObject
+        this.stations.forEach(e => {
+            e.station_id = new ObjectId();
         })
-        return
-
+        return await db.insertOne({ ...this, device_id: new ObjectId(this.device_id) });
     }
-    static addSchedule = async (station_id:string,schedule:number[][],alias:string)=>{
+    static updateSchedule = async (station_id: string, schedule: number[][], device_id: string) => {
         const db_collection = getDb().collection(collection);
         const id = new ObjectId(station_id)
-        const findScheduleResults = await db_collection.findOne({alias:alias});
-        const currentScheduleIndex = findScheduleResults.stations.findIndex((e:{station_id:ObjectId})=>e.station_id.toString()==station_id);
-       
+        const findScheduleResults = await db_collection.findOne({ device_id: new ObjectId(device_id) });
+        const currentScheduleIndex = findScheduleResults.stations.findIndex((e: { station_id: ObjectId }) => e.station_id.toString() == station_id);
+
         findScheduleResults.stations[currentScheduleIndex].schedule = schedule;
-        await db_collection.updateOne({_id: findScheduleResults._id}, {
+        await db_collection.updateOne({ _id: findScheduleResults._id }, {
             $set: findScheduleResults
         })
         return
-        
-        
-        
     }
 
-    static get = async ( alias:string) => {
-        let _id: string;
+    static fetchAll = async () => {
         const db_collection = getDb().collection(collection);
-        const findScheduleResults = await db_collection.findOne({alias:alias});
-        if (!findScheduleResults) {
-            const schedule = {...defaultSchedule}
-            schedule.alias = alias;      
-            const insertResults = await db_collection.insertOne(schedule)//insert default value
-            const findResults = await db_collection.findOne({ _id: insertResults.insertedId });
-            return findResults;
-        }
-        else {
-            return findScheduleResults
-        }
+
+        const aggregate = [
+
+            {
+                $lookup: {
+                    from: "device",
+                    localField: "device_id",
+                    foreignField: "_id",
+                    as: "device",
+                },
+
+            },
+            {
+                $unwind: {
+                    path: "$device",
+                    preserveNullAndEmptyArrays: true
+                }
+            },
+            {
+                $project: {
+                    _id: "$_id",
+                    workingTime: "$workingTime",
+                    stations: "$stations",
+                    deviceId: "$device_id",
+                    deviceAlias: "$device.alias",
+                    deviceName: "$device.name",
+                    deviceLocalIP: "$device.localIP",
+                    deviceModel: "$device.model",
+                    deviceMcu: "$device.mcu",
+                    deviceDescription: "$device.description",
+
+                }
+            },
+        ]
+
+        return await db_collection.aggregate(aggregate).toArray();
+
     }
 
-    static findAll = async ()=>{
-        const db_collection = getDb().collection(collection);
-        const findScheduleResults = await db_collection.find().toArray();
-      
-        return findScheduleResults;
-        
+ 
+    static fetchByDeviceId =  async (device_id: string) => {
+        const db = getDb().collection(collection);
+        return await db.findOne({device_id:new ObjectId(device_id)})
+    }
+    static delete = async (id: string) => {
+        const db = getDb().collection(collection);
+        return await db.findOneAndDelete({ _id: new ObjectId(id) })
     }
 
 

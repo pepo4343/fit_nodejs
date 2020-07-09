@@ -1,6 +1,7 @@
 import express, { NextFunction, Response, Request } from 'express';
 
 import watersystemRoutes from './routes/watersystem'
+import deviceRoutes from './routes/device'
 
 import bodyParser from 'body-parser';
 
@@ -8,7 +9,7 @@ import { mongoConnect } from './utils/db'
 
 import { mqttInit, getMqttClient } from './utils/mqtt'
 
-import { mqttWaterSystem } from './controllers/watersystem'
+
 import { WaterSystem } from './models/watersystem';
 
 import Config from './config'
@@ -35,10 +36,13 @@ app.use(bodyParser.urlencoded({ extended: true })); //application/x-www-form-url
 
 app.use("/watersystem", watersystemRoutes)
 
+app.use("/device", deviceRoutes)
+
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     res.status(500).json({ message: err.message });
 })
+
 
 
 mongoConnect(() => {
@@ -47,22 +51,46 @@ mongoConnect(() => {
         mqttInit();
         const client = getMqttClient();
         client.on('connect', async () => {
-            const result = await WaterSystem.findAll();
-            for (let i of result) {
-                for(let station in i.stations){
-                    
-                    
-                    client.publish(Config.mqtt.defaultUri + Config.mqtt.watersystem.schedule + i.alias+`/${station}`, i.stations[station].schedule.join(","), { retain: true })
-                }
-                client.publish(Config.mqtt.defaultUri + Config.mqtt.watersystem.workingtime + i.alias, i.workingTime.join(","), { retain: true })
-             
+            publishAll()
+            subscribeAll()
+            setInterval(() => {
+                console.log("publishing");
+                publishAll()
+            }, 3600000) // 1hr
+        })
 
-            }
-
+        client.on('message', async (topic, message) => {
+           
+            
         })
 
     });
 })
 
+
+const publishAll = async () => {
+    const client = getMqttClient();
+    const watersystems = await WaterSystem.fetchAll();
+    for (let i of watersystems) {
+        for (let station in i.stations) {
+            client.publish(Config.mqtt.defaultUri + i.deviceAlias + "/" + Config.mqtt.watersystem.scheduleTopic + "/" + station, i.stations[station].schedule.join(","), { retain: true })
+        }
+        client.publish(Config.mqtt.defaultUri + i.deviceAlias + "/" + Config.mqtt.watersystem.workingtimeTopic, i.workingTime.join(","), { retain: true })
+
+    }
+
+}
+
+const subscribeAll = async ()=>{
+    const client = getMqttClient();
+    const watersystems = await WaterSystem.fetchAll();
+    for (let i of watersystems) {
+        
+        client.subscribe(Config.mqtt.defaultUri + i.deviceAlias + "/" + Config.mqtt.watersystem.statusTopic)
+
+        console.log(Config.mqtt.defaultUri + i.deviceAlias + "/" + Config.mqtt.watersystem.statusTopic);
+        
+    }
+}
 
 
