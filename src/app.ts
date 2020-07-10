@@ -2,6 +2,7 @@ import express, { NextFunction, Response, Request } from 'express';
 
 import watersystemRoutes from './routes/watersystem'
 import deviceRoutes from './routes/device'
+import modelRoutes from './routes/model'
 
 import bodyParser from 'body-parser';
 
@@ -12,7 +13,11 @@ import { mqttInit, getMqttClient } from './utils/mqtt'
 
 import { WaterSystem } from './models/watersystem';
 
+import multer, { MulterError } from 'multer';
+
 import Config from './config'
+
+import path from 'path'
 
 const app = express();
 
@@ -28,15 +33,36 @@ app.use((req, res, next) => {
 });
 
 
+const fileModelStorage = multer.diskStorage({
+    destination: (req,file,cb)=>{
+        cb(null,path.join(__dirname,"images","boards"))
+    },
+    filename:(req,file,cb)=>{
+        cb(null,new Date().toISOString()+"-"+file.originalname)
+    }
+})
+
+const fileFilter = (req:Request,file:Express.Multer.File,cb:multer.FileFilterCallback)=>{
+    if(file.mimetype==='image/png'||file.mimetype==='image/jpg'||file.mimetype==='image/jpeg'){
+        cb(null,true);
+    }else{
+        cb(null,false); 
+    }
+}
+
 // Setup body-parser
 app.use(bodyParser.json());                         // application/json
-app.use(bodyParser.urlencoded({ extended: true })); //application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false })); //application/x-www-form-urlencoded
+app.use(multer({storage:fileModelStorage,fileFilter:fileFilter }).single("image"));
+app.use("/images",express.static(path.join(__dirname,"images")))
 
 
 
 app.use("/watersystem", watersystemRoutes)
 
 app.use("/device", deviceRoutes)
+
+app.use("/model",modelRoutes)
 
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {

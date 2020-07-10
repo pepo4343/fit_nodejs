@@ -4,17 +4,17 @@ import { Device } from '../models/device'
 import  {getMqttClient} from '../utils/mqtt'
 import { SUCCESS_MESSAGE_EN, SUCCESS_MESSAGE_TH } from '../constants/strings'
 import config from '../config'
+import { ObjectId } from 'mongodb'
 export const addDevice: RequestHandler = async (req, res, next) => {
     try {
         const {
             alias,
             name,
             description,
-            model,
-            mcu,
+            model_id,
             localIP,
         } = req.body
-        const device = new Device(alias, name, description, model, mcu, localIP)
+        const device = new Device(alias, name,localIP,new ObjectId(model_id),description)
 
         await device.save();
 

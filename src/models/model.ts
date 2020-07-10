@@ -2,23 +2,18 @@ import { getDb } from '../utils/db'
 import { ObjectId } from 'mongodb';
 
 
-const collection = "device"
+const collection = "model"
 
-export class Device {
+export class Model {
     constructor(
-        public alias: string,
-        public name: string,
-        public localIP: string,
-        public model_id: ObjectId,
-        public description?: string,
+        public board: string,
+        public mcu: string,
+        public image: string,
+
     ) { }
 
     save = async () => {
         const db = getDb().collection(collection);
-        const findAlias = await db.findOne({ alias: this.alias })
-        if (findAlias) {
-            throw Error("duplicate alias")
-        }
         return await db.insertOne(this);
     }
 
