@@ -5,6 +5,8 @@ services:
             - mongo
         container_name: fit_node
         build: .
+        volumes:
+            - ./images:/app/dist/images/boards
         networks: 
             - front
             - db
