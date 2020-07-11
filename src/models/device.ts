@@ -52,6 +52,7 @@ export class Device {
                     _id: "$_id",
                     alias: "$alias",
                     name: "$name",
+                    description: "$description",
                     localIP: "$localIP",
                     model_id: "$model_id",
                     model_board: "$model.board",
