@@ -23,7 +23,7 @@ export const addWaterSystem: RequestHandler = async (req, res, next) => {
         const device = await Device.fetchById(device_id);
         publishWaterSystem(device.alias,device_id);
         
-        res.status(201).json({ message_en: SUCCESS_MESSAGE_EN, message_th: SUCCESS_MESSAGE_TH })
+        res.status(201).json({ message: SUCCESS_MESSAGE_EN })
     } catch (err) {
         if (!err.statusCode) {
             err.statusCode = 500;
@@ -61,7 +61,7 @@ export const updateSchedule: RequestHandler = async (req, res, next) => {
       
 
 
-        res.status(200).json({ message_en: SUCCESS_MESSAGE_EN, message_th: SUCCESS_MESSAGE_TH })
+        res.status(200).json({ message: SUCCESS_MESSAGE_EN })
     } catch (err) {
         if (!err.statusCode) {
             err.statusCode = 500;

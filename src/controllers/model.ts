@@ -24,7 +24,7 @@ export const addModel: RequestHandler = async (req, res, next) => {
         
         const model = new Model(board, mcu, imageUriArray.join("/"));
         model.save();
-        res.status(201).json({ message_en: SUCCESS_MESSAGE_EN, message_th: SUCCESS_MESSAGE_TH })
+        res.status(201).json({ message: SUCCESS_MESSAGE_EN})
     } catch (err) {
         if (!err.statusCode) {
             err.statusCode = 500;

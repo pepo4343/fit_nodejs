@@ -22,7 +22,7 @@ export const addDevice: RequestHandler = async (req, res, next) => {
 
         client.subscribe(config.mqtt.defaultUri+alias+"/"+config.mqtt.watersystem.statusTopic);
         
-        res.status(201).json({message_en:SUCCESS_MESSAGE_EN,message_th:SUCCESS_MESSAGE_TH})
+        res.status(201).json({message:SUCCESS_MESSAGE_EN})
     } catch (err) {
         if (!err.statusCode) {
             err.statusCode = 500;
@@ -54,7 +54,7 @@ export const deleteDevice:RequestHandler = async (req, res, next) => {
             id,
         } = req.body
         await Device.delete(id);
-        res.status(200).json({message_en:SUCCESS_MESSAGE_EN,message_th:SUCCESS_MESSAGE_TH})
+        res.status(200).json({message:SUCCESS_MESSAGE_EN})
 
     } catch (err) {
         if (!err.statusCode) {
