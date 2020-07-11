@@ -6,7 +6,7 @@ services:
         container_name: fit_node
         build: .
         volumes:
-             - ./dist:/app/dist
+             - ./dist/images/boards:/app/dist/images/boards
         networks: 
             - front
             - db
