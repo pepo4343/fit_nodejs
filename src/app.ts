@@ -82,7 +82,7 @@ mongoConnect(() => {
             setInterval(() => {
                 console.log("publishing");
                 publishAll()
-            }, 3600000) // 1hr
+            }, 10000) // 10 second
         })
 
         client.on('message', async (topic, message) => {

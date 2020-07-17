@@ -8,52 +8,52 @@ interface Station {
 
 }
 
-interface SaveObject {
-    alias?: string,
-    workingTime?: number[],
-    stations: Station[]
-}
+// interface SaveObject {
+//     alias?: string,
+//     workingTime?: number[],
+//     stations: Station[]
+// }
 
-const defaultSchedule: SaveObject = {
-    workingTime: [25200, 64800],
-    stations: [
-        {
-            station_id: new ObjectId,
-            station_name: "test1",
-            schedule: [
-                [28800, 29700,],
-                [57600, 58500],
-            ]
-        },
-        {
-            station_id: new ObjectId,
-            station_name: "test1",
-            schedule: [
-                [29700, 30600],
-                [58500, 59400],
-            ]
-        },
-        {
-            station_id: new ObjectId,
-            station_name: "test1",
-            schedule: [
-                [30600, 31500],
-                [59400, 60300],
+// const defaultSchedule: SaveObject = {
+//     workingTime: [25200, 64800],
+//     stations: [
+//         {
+//             station_id: new ObjectId,
+//             station_name: "test1",
+//             schedule: [
+//                 [28800, 29700,],
+//                 [57600, 58500],
+//             ]
+//         },
+//         {
+//             station_id: new ObjectId,
+//             station_name: "test1",
+//             schedule: [
+//                 [29700, 30600],
+//                 [58500, 59400],
+//             ]
+//         },
+//         {
+//             station_id: new ObjectId,
+//             station_name: "test1",
+//             schedule: [
+//                 [30600, 31500],
+//                 [59400, 60300],
 
-            ]
-        },
-        {
-            station_id: new ObjectId,
-            station_name: "test1",
-            schedule: [
-                [31500, 32400],
-                [60300, 61200],
+//             ]
+//         },
+//         {
+//             station_id: new ObjectId,
+//             station_name: "test1",
+//             schedule: [
+//                 [31500, 32400],
+//                 [60300, 61200],
 
-            ]
-        },
-    ]
+//             ]
+//         },
+//     ]
 
-}
+// }
 
 const collection = 'watersystem';
 
